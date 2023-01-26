@@ -18,29 +18,30 @@ const FilterBar = ({facets}) => {
         return comparison;
     }
 
-    const sortedAuthors = facets.authors.sort(sortFilter).slice(0, 5)
-    const sortedTopics = facets.topics.sort(sortFilter).slice(0, 5)
-    const sortedYears = facets.published_year.sort(sortFilter).slice(0, 5)
+    const required = ["authors", "published_year", "topics"];
+
+    const newFacets = Object.entries(facets)
+        .filter(([key]) => required.some(r => key === r))
 
 
-    const filterList = (items, title) => {
+    const FilterList = ({items, title}) => {
         return <div className={"filter-list-container"}>
             <h3>{title}</h3>
             <ul className={"filter-list"}>{items.map(i => <li className={"filter-item"} key={i.key}>{i.key}</li>)}</ul>
         </div>
     }
 
-    const filterMenu = () => {
+    const FilterMenu = () => {
         return <div style={showMenu ? {display: "flex"} : {display: "none"}} className={"filter-menu"}>
-            {filterList(sortedAuthors,"Author")}
-            {filterList(sortedYears, "Published Year")}
-            {filterList(sortedTopics, "Topics")}
+            {newFacets.map(([key, value]) =>
+                <FilterList items={value.sort(sortFilter).slice(0,5)} title={key}/>
+            )}
         </div>
     }
 
     return <div className={"filter-bar"}>
         <TextButton text={"Filter"} onClick={() => setShowMenu(!showMenu)}/>
-        {filterMenu()}
+        <FilterMenu/>
     </div>
 
 }
